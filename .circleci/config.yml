@@ -56,8 +56,8 @@ jobs:
             
             echo "Docker ID and Image: ${DOCKER_PATH}"
             docker login --username "${DOCKER_PATH}" --password "${DOCKER_PASS}"
-            docker image tag "capstone-project-${CIRCLE_WORKFLOW_ID:0:7}" "${DOCKER_PATH}/capstone-project-${CIRCLE_WORKFLOW_ID:0:7}"
-            docker image push "${DOCKER_PATH}/capstone-project-${CIRCLE_WORKFLOW_ID:0:7}"
+            docker image tag "capstone-project-${CIRCLE_WORKFLOW_ID:0:7}" "${DOCKER_PATH}/capstone-project/${CIRCLE_WORKFLOW_ID:0:7}"
+            docker image push "${DOCKER_PATH}/capstone-project/${CIRCLE_WORKFLOW_ID:0:7}"
 
 workflows:
   default:
