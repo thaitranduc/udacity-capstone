@@ -23,8 +23,20 @@ https://github.com/thaitranduc/udacity-capstone.git
 3. Dockerfile
     - ./frontend/Dockerfile
 
+# Pylint Fail
+![CircleCI](./screenshots/2023-10-26_203317.png)
+
+# Pylint Pass
+![CircleCI](./screenshots/2023-10-26_205028.png)
+
 # CircleCI pipeline
 ![CircleCI](./screenshots/2023-10-26_170316.png)
+
+# Docker Repository
+![AWS](./screenshots/2023-10-26_203519.png)
+
+# AWS Cloudformation
+![AWS](./screenshots/2023-10-26_203519.png)
 
 # EC2 Instances
 ![AWS](./screenshots/2023-10-26_170732.png)
