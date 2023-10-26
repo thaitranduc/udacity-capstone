@@ -59,9 +59,49 @@ jobs:
             docker image tag "capstone-project:${CIRCLE_WORKFLOW_ID:0:7}" "${DOCKER_PATH}/capstone-project:${CIRCLE_WORKFLOW_ID:0:7}"
             docker image push "${DOCKER_PATH}/capstone-project:${CIRCLE_WORKFLOW_ID:0:7}"
 
+  deploy:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run: yum install -y tar gzip python3
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: eksctl Installation
+          command: |
+            curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_Linux_amd64.tar.gz" | tar xz -C /tmp
+            mv /tmp/eksctl /usr/local/bin
+      - run:
+          name: kubectl Installation
+          command: |
+            curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+            install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+            kubectl version --client
+      - run:
+          name: eksctl create cluster
+          command: |
+            export DOCKER_PATH=$DOCKER_PATH
+            echo "${DOCKER_PATH}"
+
+            eksctl create cluster --name "casptone-project:${CIRCLE_WORKFLOW_ID:0:7}" --region=us-east-1
+            kubectl get nodes
+            kubectl create deploy capstone-project-eks --image="${DOCKER_PATH}/capstone-project:${CIRCLE_WORKFLOW_ID:0:7}"
+            kubectl get deploy,rs,svc,pods
+            echo "-----------------------------------"
+            
+            kubectl wait deployment capstone-project-eks --for condition=Available=True --timeout=120s 
+            kubectl get deploy,rs,svc,pods
+            echo "-----------------------------------"
+            
+            kubectl expose deployment capstone-project-eks --port=3000 --target-port=3000 --name=capstone-project-lb --type=LoadBalancer
+            kubectl get deploy,rs,svc,pods
+            echo "-----------------------------------"
 workflows:
   default:
     jobs:
       - build
       - push:
           requires: [build]
+      - deploy:
+          requires: [push]
