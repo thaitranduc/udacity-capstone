@@ -79,15 +79,12 @@ jobs:
           name: Using EKS install cluster
           command: |
             export DOCKER_PATH=$DOCKER_PATH
-
             eksctl create cluster --name "casptone-project-${CIRCLE_WORKFLOW_ID:0:7}" --region=us-west-1
             kubectl get nodes
             kubectl create deploy capstone-project-eks --image="${DOCKER_PATH}/capstone-project:${CIRCLE_WORKFLOW_ID:0:7}"
             kubectl get deploy,rs,svc,pods
-            
             kubectl wait deployment capstone-project-eks --for condition=Available=True --timeout=120s 
             kubectl get deploy,rs,svc,pods
-            
             kubectl expose deployment capstone-project-eks --port=1234 --target-port=1234 --name=capstone-project-loadbalancer --type=LoadBalancer
             kubectl get deploy,rs,svc,pods
 workflows:
