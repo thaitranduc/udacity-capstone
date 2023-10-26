@@ -24,12 +24,13 @@ https://github.com/thaitranduc/udacity-capstone.git
     - ./frontend/Dockerfile
 
 # CircleCI pipeline
-1. On CircleCi
 (./screenshots/2023-10-26_170316.png)
 
-# K8s Create pipeline
-1. On CircleCi
+# EC2 Instances
 (./screenshots/2023-10-26_170732.png)
+
+# K8s Create pipelines
+(./screenshots/2023-10-26_171725.png)
 
 # Browser
 http://adf0467cdc2bd451c8ca8c04515a862e-421794244.us-west-1.elb.amazonaws.com:1234/
