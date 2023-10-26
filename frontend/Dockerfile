@@ -9,6 +9,5 @@ RUN npm install
 COPY . .
 
 EXPOSE 8080
-# Lint failed
-COPY asjklfsdjk ./asdfasdfwe
+
 CMD [ "node", "server.js" ]
