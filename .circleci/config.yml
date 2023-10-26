@@ -31,8 +31,37 @@ jobs:
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
+  
+  push:
+    working_directory: /app
+    docker:
+      - image: docker:17.05.0-ce-git
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --no-cache py-pip=9.0.0-r1
+            pip install docker-compose==1.12.0 awscli==1.11.76
+      - run: 
+          name: docker build and push
+          command: |
+            cd backend
+            export DOCKER_PATH=$DOCKER_PATH
+            export DOCKER_PASS=$DOCKER_PASS
+
+            docker build --tag "capstone-project-${CIRCLE_WORKFLOW_ID:0:7}" .
+            docker image list
+            
+            echo "Docker ID and Image: ${DOCKER_PATH}"
+            docker login --username "${DOCKER_PATH}" --password "${DOCKER_PASS}"
+            docker image tag "capstone-project-${CIRCLE_WORKFLOW_ID:0:7}" "${DOCKER_PATH}/capstone-project-${CIRCLE_WORKFLOW_ID:0:7}"
+            docker image push "${DOCKER_PATH}/capstone-project-${CIRCLE_WORKFLOW_ID:0:7}"
 
 workflows:
   default:
     jobs:
       - build
+      - push:
+          requires: [build]
