@@ -1,6 +1,6 @@
 {
     "name": "udacity-capstone",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "Final Capstone of Project",
     "main": "server.js",
     "scripts": {
@@ -8,7 +8,7 @@
       "test": "jest"
     },
     "author": "ThaiTD3",
-    "license": "ISC",
+    "license": "MIT",
     "dependencies": {
       "dotenv": "^16.0.3",
       "express": "^4.18.2",

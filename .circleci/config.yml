@@ -7,30 +7,30 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [backend-build]
+          keys: [frontend-build]
       - run:
           name: setup
           command: |
-            cd backend
+            cd frontend
             make setup
       - run:
           name: install dependencies
           command: |
-            cd backend
+            cd frontend
             make install
       - run:
           name: run test
           command: |
-            cd backend
+            cd frontend
             make test
       - run:
           name: run lint
           command: |
-            cd backend
+            cd frontend
             make lint
       - save_cache:
-          paths: [backend/node_modules]
-          key: backend-build
+          paths: [frontend/node_modules]
+          key: frontend-build
   
   push:
     working_directory: /app
@@ -47,14 +47,11 @@ jobs:
       - run: 
           name: docker build and push
           command: |
-            cd backend
+            cd frontend
             export DOCKER_PATH=$DOCKER_PATH
             export DOCKER_PASS=$DOCKER_PASS
-
             docker build --tag "capstone-project:${CIRCLE_WORKFLOW_ID:0:7}" .
-            docker image list
-            
-            echo "Docker ID and Image: ${DOCKER_PATH}"
+            docker images
             docker login --username "${DOCKER_PATH}" --password "${DOCKER_PASS}"
             docker image tag "capstone-project:${CIRCLE_WORKFLOW_ID:0:7}" "${DOCKER_PATH}/capstone-project:${CIRCLE_WORKFLOW_ID:0:7}"
             docker image push "${DOCKER_PATH}/capstone-project:${CIRCLE_WORKFLOW_ID:0:7}"
@@ -68,35 +65,31 @@ jobs:
       - attach_workspace:
           at: ~/
       - run:
-          name: eksctl Installation
+          name: Install EKS
           command: |
             curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_Linux_amd64.tar.gz" | tar xz -C /tmp
             mv /tmp/eksctl /usr/local/bin
       - run:
-          name: kubectl Installation
+          name: Install K8s
           command: |
             curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
             install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
             kubectl version --client
       - run:
-          name: eksctl create cluster
+          name: Using EKS install cluster
           command: |
             export DOCKER_PATH=$DOCKER_PATH
-            echo "${DOCKER_PATH}"
 
             eksctl create cluster --name "casptone-project:${CIRCLE_WORKFLOW_ID:0:7}" --region=us-east-1
             kubectl get nodes
             kubectl create deploy capstone-project-eks --image="${DOCKER_PATH}/capstone-project:${CIRCLE_WORKFLOW_ID:0:7}"
             kubectl get deploy,rs,svc,pods
-            echo "-----------------------------------"
             
             kubectl wait deployment capstone-project-eks --for condition=Available=True --timeout=120s 
             kubectl get deploy,rs,svc,pods
-            echo "-----------------------------------"
             
-            kubectl expose deployment capstone-project-eks --port=3000 --target-port=3000 --name=capstone-project-lb --type=LoadBalancer
+            kubectl expose deployment capstone-project-eks --port=1234 --target-port=1234 --name=capstone-project-loadbalancer --type=LoadBalancer
             kubectl get deploy,rs,svc,pods
-            echo "-----------------------------------"
 workflows:
   default:
     jobs:

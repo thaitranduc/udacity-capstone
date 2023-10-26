@@ -3,8 +3,7 @@ const express = require('express')
 const app = express()
 
 app.get('/', (req, res) => {
-    const STUDENT_NAME = process.env.STUDENT_NAME
-    res.send(`Hello World, my name is ${STUDENT_NAME}`)
+    res.send(`Capstone project ThaiTD3`)
 })
 
 module.exports = app;
