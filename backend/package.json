@@ -1,13 +1,13 @@
 {
     "name": "udacity-capstone",
     "version": "1.0.0",
-    "description": "cloud devops engineer",
+    "description": "Final Capstone of Project",
     "main": "server.js",
     "scripts": {
       "start": "node server.js",
       "test": "jest"
     },
-    "author": "DuongNH19",
+    "author": "ThaiTD3",
     "license": "ISC",
     "dependencies": {
       "dotenv": "^16.0.3",
